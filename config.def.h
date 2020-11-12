@@ -8,13 +8,13 @@ static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "monospace:size=10" };
+static const char *fonts[]          = { "monospace:size=10", "fontawesome:size=12" };
 static const char dmenufont[]       = "monospace:size=10";
 static const char col_gray1[]       = "#121212";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#3b780c";
+static const char col_cyan[]        = "#d67411";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
@@ -22,12 +22,12 @@ static const char *colors[][3]      = {
 };
 
 /* Multimedia Keys */
-static const char *upvol[]   = { "/usr/bin/pactl", "set-sink-volume", "0", "+5%",     NULL };
-static const char *downvol[] = { "/usr/bin/pactl", "set-sink-volume", "0", "-5%",     NULL };
-static const char *mutevol[] = { "/usr/bin/pactl", "set-sink-mute",   "0", "toggle",  NULL };
+static const char *upvol[]   = { "/usr/bin/pamixer", "--sink", "0", "-i", "5",     NULL };
+static const char *downvol[] = { "/usr/bin/pamixer", "--sink", "0", "-d", "5",     NULL };
+static const char *mutevol[] = { "/usr/bin/pamixer", "--sink",   "0", "-t",  NULL };
 
 /* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+static const char *tags[] = { "", "2", "3", "4", "5", "6", "7", "8", "" };
 
 static const Rule rules[] = {
 	/* xprop(1):
