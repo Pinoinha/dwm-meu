@@ -32,7 +32,7 @@ static const char *downvol[] = { "/usr/bin/pamixer", "--sink", "0", "-d", "5",  
 static const char *mutevol[] = { "/usr/bin/pamixer", "--sink",   "0", "-t",  NULL };
 
 /* tagging */
-static const char *tags[] = { "", "2", "3", "4", "5", "6", "7", "8", "" };
+static const char *tags[] = { "", "2", "3", "4", "5", "6", "7", "", "" };
 
 static const Rule rules[] = {
 	/* xprop(1):
