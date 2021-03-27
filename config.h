@@ -7,6 +7,7 @@
 static const unsigned int borderpx  = 0;        /* border pixel of windows */
 static const unsigned int gappx     = 5;        /* gaps between windows */
 static const unsigned int snap      = 32;       /* snap pixel */
+static const int swallowfloating    = 1;        /* 1 means swallow floating windows by default */
 static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayspacing = 2;   /* systray spacing */
 static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
@@ -40,18 +41,19 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      								instance    title       tags mask     isfloating   monitor */
-	{ "firefoxdeveloperedition",  NULL,       NULL,       1 << 4,       0,           -1 },
-	{ "LibreWolf",  							NULL,       NULL,       1 << 4,       0,           -1 },
-	{ "TelegramDesktop",  				NULL,       NULL,       1 << 3,       1,           -1 },
-	{ "lightcord",  							NULL,       NULL,       1 << 3,       0,      		 -1 },
-	{ "Steam",  									NULL,       NULL,       1 << 2,       1,      		 -1 },
-	{ "obs",  										NULL,       NULL,       1 << 2,       1,      		 -1 },
-	{ "Sxiv",  										NULL,       NULL,       0,       			1,      		 -1 },
-	{ "mpv",  										NULL,       NULL,       0,       			1,      		 -1 },
-	{ "Zathura",  								NULL,       NULL,       0,       			1,      		 -1 },
-	{ "Iwgtk",  									NULL,       NULL,       0,       			1,      		 -1 },
-	{ "Galculator",  							NULL,       NULL,       0,       			1,      		 -1 },
+	/* class     									instance  	title       tags mask  		isfloating  	isterminal  noswallow  monitor */
+	{ "Alacritty",    						NULL,     	NULL,       0,         		0,          	1,						0,        -1	},
+	{ "firefoxdeveloperedition",  NULL,       NULL,       1 << 4,       0,           	0, 					 	1,				-1	},
+	{ "LibreWolf",  							NULL,       NULL,       1 << 4,       0,           	0, 						1,				-1	},
+	{ "TelegramDesktop",  				NULL,       NULL,       1 << 3,       1,           	0, 						0,				-1	},
+	{ "lightcord",  							NULL,       NULL,       1 << 3,       0,      		 	0, 						0,				-1	},
+	{ "Steam",  									NULL,       NULL,       1 << 2,       1,      		 	0, 						0,				-1	},
+	{ "obs",  										NULL,       NULL,       1 << 2,       1,      		 	0, 						1,				-1	},
+	{ "Sxiv",  										NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
+	{ "mpv",  										NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
+	{ "Zathura",  								NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
+	{ "Iwgtk",  									NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
+	{ "Galculator",  							NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
 };
 
 /* layout(s) */
@@ -103,8 +105,8 @@ static Key keys[] = {
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY|ShiftMask,             XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                       XK_space,  setlayout,      {0} },
-	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
+	{ MODKEY|ShiftMask,             XK_space,  setlayout,      {0} },
+	{ MODKEY,             					XK_space,  togglefloating, {0} },
 	{ MODKEY,             					XK_f,      togglefullscr,  {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
