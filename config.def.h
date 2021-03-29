@@ -14,6 +14,7 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 0;     /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
+static const int user_bh           = 32;        /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
 static const char *fonts[]          = { "Adobe Courier Regular:size=14", "Symbols Nerd Font:size=12" };
 static const char dmenufont[]       = "Adobe Courier Regular:size=12";
 static const char col_gray1[]       = "#121212";
