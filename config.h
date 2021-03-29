@@ -19,9 +19,8 @@ static const char *fonts[]          = { "Adobe Courier Regular:size=14", "Symbol
 static const char dmenufont[]       = "Adobe Courier Regular:size=12";
 static const char col_gray1[]       = "#121212";
 static const char col_gray2[]       = "#444444";
-static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#eeeeee";
-/*static const char col_cyan[]        = "#dfdfdf";*/
+static const char col_gray3[]       = "#dfdfdf";
+static const char col_gray4[]       = "#ffdfdf";
 static const char col_cyan[]        = "#e60053";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
@@ -42,21 +41,21 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class     									instance  	title       tags mask  		isfloating  	isterminal  noswallow  monitor */
-	{ "Alacritty",    						NULL,     	NULL,       0,         		0,          	1,						0,        -1	},
-	{ "firefoxdeveloperedition",  NULL,       NULL,       1 << 4,       0,           	0, 					 	1,				-1	},
-	{ "LibreWolf",  							NULL,       NULL,       1 << 4,       0,           	0, 						1,				-1	},
-	{ "TelegramDesktop",  				NULL,       NULL,       1 << 3,       1,           	0, 						0,				-1	},
-	{ "lightcord",  							NULL,       NULL,       1 << 3,       0,      		 	0, 						0,				-1	},
-	{ "Steam",  									NULL,       NULL,       1 << 2,       1,      		 	0, 						0,				-1	},
-	{ "obs",  										NULL,       NULL,       1 << 2,       1,      		 	0, 						1,				-1	},
-	{ "Sxiv",  										NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
-	{ "mpv",  										NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
-	{ "Zathura",  								NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
-	{ "Iwgtk",  									NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
-	{ "Galculator",  							NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
-	{ NULL, 											NULL, 			"hidden", 	SP_MASK, 			1, 						0,						0,				-1  },
-	{ NULL, 											NULL, 			"flterm", 	0, 						1, 						1,						0,				-1  },
+	/* class     					instance  	title       tags mask  		isfloating  	isterminal  noswallow  monitor */
+	{ "Alacritty",    		NULL,     	NULL,       0,         		0,          	1,						0,        -1	},
+	/* Web browsers are opened at tag 5 */
+	{ NULL,  							"Navigator", NULL,      1 << 4,       0,           	0, 						1,				-1	},
+	{ "TelegramDesktop",  NULL,       NULL,       1 << 3,       1,           	0, 						0,				-1	},
+	{ "lightcord",  			NULL,       NULL,       1 << 3,       0,      		 	0, 						0,				-1	},
+	{ "Steam",  					NULL,       NULL,       1 << 2,       1,      		 	0, 						0,				-1	},
+	{ "obs",  						NULL,       NULL,       1 << 2,       1,      		 	0, 						1,				-1	},
+	{ "Sxiv",  						NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
+	{ "mpv",  						NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
+	{ "Zathura",  				NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
+	{ "Iwgtk",  					NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
+	{ "Galculator",  			NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
+	{ NULL, 							NULL, 			"hidden", 	SP_MASK, 			1, 						0,						0,				-1  },
+	{ NULL, 							NULL, 			"flterm", 	0, 						1, 						1,						0,				-1  },
 };
 
 /* layout(s) */
