@@ -337,7 +337,7 @@ static Monitor *mons, *selmon;
 static Window root, wmcheckwin;
 
 /* scratchpad */
-# define SCRATCHPAD_MASK (1u << sizeof tags / sizeof * tags)
+# define SP_MASK (1u << sizeof tags / sizeof * tags)
 static Client * scratchpad_last_showed = NULL;
 
 static xcb_connection_t *xcon;
@@ -393,7 +393,7 @@ applyrules(Client *c)
 		XFree(ch.res_class);
 	if (ch.res_name)
 		XFree(ch.res_name);
-	if (c->tags != SCRATCHPAD_MASK)
+	if (c->tags != SP_MASK)
 		c->tags = c->tags & TAGMASK ? c->tags & TAGMASK : c->mon->tagset[c->mon->seltags];
 }
 
@@ -933,9 +933,10 @@ drawbar(Monitor *m)
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
 		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], urg & 1 << i);
 		if (occ & 1 << i)
-			drw_rect(drw, x + boxs, boxs, boxw, boxw,
-				m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
-				urg & 1 << i);
+			drw_rect(drw, x + boxw, 0, w - ( 2 * boxw + 1), boxw,
+			    m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
+			    urg & 1 << i);
+
 		x += w;
 	}
 	w = blw = TEXTW(m->ltsymbol);
@@ -1700,7 +1701,7 @@ static void scratchpad_hide ()
 {
 	if (selmon -> sel)
 	{
-		selmon -> sel -> tags = SCRATCHPAD_MASK;
+		selmon -> sel -> tags = SP_MASK;
 		selmon -> sel -> isfloating = 1;
 		focus(NULL);
 		arrange(selmon);
@@ -1733,9 +1734,9 @@ static void scratchpad_show ()
 		scratchpad_show_first ();
 	else
 	{
-		if (scratchpad_last_showed -> tags != SCRATCHPAD_MASK)
+		if (scratchpad_last_showed -> tags != SP_MASK)
 		{
-			scratchpad_last_showed -> tags = SCRATCHPAD_MASK;
+			scratchpad_last_showed -> tags = SP_MASK;
 			focus(NULL);
 			arrange(selmon);
 		}
@@ -1755,7 +1756,7 @@ static void scratchpad_show ()
 				}
 				else
 				{
-					if (c -> tags == SCRATCHPAD_MASK)
+					if (c -> tags == SP_MASK)
 					{
 						found_next = 1;
 						scratchpad_show_client (c);
@@ -1780,7 +1781,7 @@ static void scratchpad_show_first (void)
 {
 	for (Client * c = selmon -> clients; c != NULL; c = c -> next)
 	{
-		if (c -> tags == SCRATCHPAD_MASK)
+		if (c -> tags == SP_MASK)
 		{
 			scratchpad_show_client (c);
 			break;
