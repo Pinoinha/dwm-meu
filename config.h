@@ -7,7 +7,7 @@
 static const unsigned int borderpx  = 0;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const unsigned int gappih    = 10;       /* horiz inner gap between windows */
-static const unsigned int gappiv    = 10;       /* vert inner gap between windows */
+static const unsigned int gappiv    = 6;       /* vert inner gap between windows */
 static const unsigned int gappoh    = 10;       /* horiz outer gap between windows and screen edge */
 static const unsigned int gappov    = 10;       /* vert outer gap between windows and screen edge */
 static const int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
@@ -45,21 +45,22 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class     					instance  	title       tags mask  		isfloating  	isterminal  noswallow  monitor */
-	{ "Alacritty",    		NULL,     	NULL,       0,         		0,          	1,						0,        -1	},
-	/* Web browsers are opened at tag 5 */
-	{ NULL,  							"Navigator", NULL,      1 << 4,       0,           	0, 						1,				-1	},
-	{ "TelegramDesktop",  NULL,       NULL,       1 << 3,       1,           	0, 						0,				-1	},
-	{ "lightcord",  			NULL,       NULL,       1 << 3,       0,      		 	0, 						0,				-1	},
-	{ "Steam",  					NULL,       NULL,       1 << 2,       1,      		 	0, 						0,				-1	},
-	{ "obs",  						NULL,       NULL,       1 << 2,       1,      		 	0, 						1,				-1	},
-	{ "Sxiv",  						NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
-	{ "mpv",  						NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
-	{ "Zathura",  				NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
-	{ "Iwgtk",  					NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
-	{ "Galculator",  			NULL,       NULL,       0,       			1,      		 	0, 						0,				-1	},
-	{ NULL, 							NULL, 			"hidden", 	SP_MASK, 			1, 						0,						0,				-1  },
-	{ NULL, 							NULL, 			"flterm", 	0, 						1, 						1,						0,				-1  },
+	/* class     					instance  		title       tags mask  		isfloating  	isterminal  noswallow  monitor */
+	{ "Alacritty",    		NULL,     		NULL,       0,         		0,          	1,						0,        -1	},
+	/* Web browsers are opened at tag	5 */
+	{ NULL,  							"Navigator",	NULL,      	1 << 4,       0,           	0, 						1,				-1	},
+	{ NULL,  							"Toolkit", 		NULL,      	0,       			1,           	0, 						1,				-1	},
+	{ "TelegramDesktop",  NULL,       	NULL,       1 << 3,       1,           	0, 						0,				-1	},
+	{ "lightcord",  			NULL,       	NULL,       1 << 3,       0,      		 	0, 						0,				-1	},
+	{ "Steam",  					NULL,       	NULL,       1 << 2,       1,      		 	0, 						0,				-1	},
+	{ "obs",  						NULL,       	NULL,       1 << 2,       1,      		 	0, 						1,				-1	},
+	{ "Sxiv",  						NULL,       	NULL,       0,       			1,      		 	0, 						0,				-1	},
+	{ "mpv",  						NULL,       	NULL,       0,       			1,      		 	0, 						0,				-1	},
+	{ "Zathura",  				NULL,       	NULL,       0,       			1,      		 	0, 						0,				-1	},
+	{ "Iwgtk",  					NULL,       	NULL,       0,       			1,      		 	0, 						0,				-1	},
+	{ "Galculator",  			NULL,       	NULL,       0,       			1,      		 	0, 						0,				-1	},
+	{ NULL, 							NULL, 				"hidden", 	SP_MASK, 			1, 						0,						0,				-1  },
+	{ NULL, 							NULL, 				"flterm", 	0, 						1, 						1,						0,				-1  },
 };
 
 /* layout(s) */
@@ -94,6 +95,7 @@ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,
 
 static const char *termcmd[]  = { "st", NULL };
 static const char *fltermcmd[]  = { "st", "-t", "flterm", "-g", "60x20", NULL };
+static const char *tbtermcmd[]  = { "tabbed", "-r", "2", "st", "-w", "''", NULL };
 
 #include "movestack.c"
 static Key keys[] = {
@@ -101,6 +103,7 @@ static Key keys[] = {
 	/*{ MODKEY,                       XK_d,      spawn,          {.v = dmenucmd } },*/
 	{ MODKEY,	                			XK_Return, spawn,          {.v = termcmd } }, 
 	{ MODKEY|ShiftMask,	            XK_Return, spawn,          {.v = fltermcmd } }, 
+	{ MODKEY|ControlMask,	          XK_Return, spawn,          {.v = tbtermcmd } }, 
 	{ MODKEY|ShiftMask,             XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
