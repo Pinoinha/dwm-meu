@@ -5,8 +5,12 @@
 
 /* appearance */
 static const unsigned int borderpx  = 0;        /* border pixel of windows */
-static const unsigned int gappx     = 5;        /* gaps between windows */
 static const unsigned int snap      = 32;       /* snap pixel */
+static const unsigned int gappih    = 10;       /* horiz inner gap between windows */
+static const unsigned int gappiv    = 10;       /* vert inner gap between windows */
+static const unsigned int gappoh    = 10;       /* horiz outer gap between windows and screen edge */
+static const unsigned int gappov    = 10;       /* vert outer gap between windows and screen edge */
+static const int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
 static const int swallowfloating    = 1;        /* 1 means swallow floating windows by default */
 static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayspacing = 2;   /* systray spacing */
@@ -124,9 +128,6 @@ static Key keys[] = {
 	{ MODKEY,                       XK_bracketright, shiftview,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
-	{ MODKEY,                       XK_minus,  setgaps,        {.i = -1 } },
-	{ MODKEY,                       XK_equal,  setgaps,        {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_equal,  setgaps,        {.i = 0  } },
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
@@ -139,7 +140,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_BackSpace,      quit,           {0} },
 	{ MODKEY,             					XK_backslash,	 scratchpad_hide, 			 {0} },
 	{ MODKEY|ShiftMask,             XK_backslash,	 scratchpad_show, 			 {0} },
-	{ MODKEY,                       XK_apostrophe, scratchpad_remove,			 {0} },
+	{ MODKEY|ControlMask,           XK_backslash,  scratchpad_remove,			 {0} },
 };
 
 /* button definitions */
