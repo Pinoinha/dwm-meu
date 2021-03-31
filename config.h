@@ -3,6 +3,9 @@
 /* Patches */
 #include <X11/XF86keysym.h>
 
+/* Define the terminal of your choice here */
+#define TERM "st"
+
 /* appearance */
 static const unsigned int borderpx  = 0;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
@@ -51,6 +54,8 @@ static const Rule rules[] = {
 	/* Web browsers are opened at tag	5 */
 	{ NULL,  							"Navigator",	NULL,      	1 << 4,       0,           	0, 						1,				-1	},
 	{ NULL,  							"Toolkit", 		NULL,      	0,       			1,           	0, 						1,				-1	},
+	/* xev and similar software */
+	{ NULL,  							NULL, 				NULL,      	0,       			0,           	0, 						0,				-1	},
 	{ "TelegramDesktop",  NULL,       	NULL,       1 << 3,       1,           	0, 						0,				-1	},
 	{ "lightcord",  			NULL,       	NULL,       1 << 3,       0,      		 	0, 						0,				-1	},
 	{ "Steam",  					NULL,       	NULL,       1 << 2,       1,      		 	0, 						0,				-1	},
@@ -88,8 +93,6 @@ static const Layout layouts[] = {
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
-
-#define TERM "st"
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
@@ -157,6 +160,7 @@ static Key keys[] = {
 
 	/* Center a floating window using custom wmMove command */
 	{ MODKEY,       					-1,       	XK_c, 		 spawn,          SHCMD("wmMove center") },
+	{ ALTKEY,       					-1,       	XK_c, 		 spawn,          SHCMD("wmMove center") },
 
 	/* Scratchpad control */
 	{ MODKEY,             		-1,					XK_backslash,	 scratchpad_hide, 			 {0} },
@@ -164,20 +168,20 @@ static Key keys[] = {
 	{ MODKEY|ControlMask,     -1,					XK_backslash,  scratchpad_remove,			 {0} },
 
 	/* Audio control */
-	{ ShiftMask,       				-1,         XK_F1,     spawn,            SHCMD("pulsemixer --toggle-mute; pkill -RTMIN+10 dwmblocks")},
-	{ ShiftMask,       				-1,         XK_F2,     spawn,            SHCMD("pulsemixer --change-volume -5; pkill -RTMIN+10 dwmblocks")},
-	{ ShiftMask,       				-1,         XK_F3,     spawn,            SHCMD("pulsemixer --change-volume +5; pkill -RTMIN+10 dwmblocks")},
-	{ ShiftMask,       				-1,         XK_F4,     spawn,            SHCMD("mic_check") },
+	{ ShiftMask,       				-1,         XK_F1,     spawn,          SHCMD("pulsemixer --toggle-mute; pkill -RTMIN+10 dwmblocks")},
+	{ ShiftMask,       				-1,         XK_F2,     spawn,          SHCMD("pulsemixer --change-volume -5; pkill -RTMIN+10 dwmblocks")},
+	{ ShiftMask,       				-1,         XK_F3,     spawn,          SHCMD("pulsemixer --change-volume +5; pkill -RTMIN+10 dwmblocks")},
+	{ ShiftMask,       				-1,         XK_F4,     spawn,          SHCMD("mic_check") },
 
 	/* MPC */
-	{ ShiftMask,       				-1,         XK_F5,     spawn,            SHCMD("mpc stop") },
-	{ ShiftMask,       				-1,         XK_F6,     spawn,            SHCMD("mpc prev") },
-	{ ShiftMask,       				-1,         XK_F7,     spawn,            SHCMD("mpc toggle") },
-	{ ShiftMask,       				-1,         XK_F8,     spawn,            SHCMD("mpc next") },
+	{ ShiftMask,       				-1,         XK_F5,     spawn,          SHCMD("mpc stop") },
+	{ ShiftMask,       				-1,         XK_F6,     spawn,          SHCMD("mpc prev") },
+	{ ShiftMask,       				-1,         XK_F7,     spawn,          SHCMD("mpc toggle") },
+	{ ShiftMask,       				-1,         XK_F8,     spawn,          SHCMD("mpc next") },
 
 	/* Brightness control */
-	{ ShiftMask,       				-1,         XK_F11,    spawn,            SHCMD("xbacklight -dec 10") },
-	{ ShiftMask,       				-1,         XK_F12,    spawn,            SHCMD("xbacklight -inc 10") },
+	{ ShiftMask,       				-1,         XK_F11,    spawn,          SHCMD("xbacklight -dec 10") },
+	{ ShiftMask,       				-1,         XK_F12,    spawn,          SHCMD("xbacklight -inc 10") },
 
 	/* Terminal Applications */
 	{ ALTKEY,             		-1,         XK_v, 		 spawn,          SHCMD(TERM " -e nvim") },
