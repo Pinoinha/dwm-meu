@@ -14,7 +14,7 @@ static const unsigned int gappiv    = 6;       /* vert inner gap between windows
 static const unsigned int gappoh    = 10;       /* horiz outer gap between windows and screen edge */
 static const unsigned int gappov    = 10;       /* vert outer gap between windows and screen edge */
 static const int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
-static const int swallowfloating    = 1;        /* 1 means swallow floating windows by default */
+static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
 static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayspacing = 2;   /* systray spacing */
 static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
@@ -48,25 +48,25 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class     					instance  		title       tags mask  		isfloating  	isterminal  noswallow  monitor */
-	{ "St",    						NULL,     		NULL,       0,         		0,          	1,						0,        -1	},
-	{ "Alacritty",    		NULL,     		NULL,       0,         		0,          	1,						0,        -1	},
+	/* class     					instance  		title       		tags mask  		isfloating  	isterminal  noswallow  monitor */
+	{ "St",    						NULL,     		NULL,       		0,         		0,          	1,						0,        -1	},
+	{ "Alacritty",    		NULL,     		NULL,       		0,         		0,          	1,						0,        -1	},
 	/* Web browsers are opened at tag	5 */
-	{ NULL,  							"Navigator",	NULL,      	1 << 4,       0,           	0, 						1,				-1	},
-	{ NULL,  							"Toolkit", 		NULL,      	0,       			1,           	0, 						1,				-1	},
-	/* xev and similar software */
-	{ NULL,  							NULL, 				NULL,      	0,       			0,           	0, 						0,				-1	},
-	{ "TelegramDesktop",  NULL,       	NULL,       1 << 3,       1,           	0, 						0,				-1	},
-	{ "lightcord",  			NULL,       	NULL,       1 << 3,       0,      		 	0, 						0,				-1	},
-	{ "Steam",  					NULL,       	NULL,       1 << 2,       1,      		 	0, 						0,				-1	},
-	{ "obs",  						NULL,       	NULL,       1 << 2,       1,      		 	0, 						1,				-1	},
-	{ "Sxiv",  						NULL,       	NULL,       0,       			1,      		 	0, 						0,				-1	},
-	{ "mpv",  						NULL,       	NULL,       0,       			1,      		 	0, 						0,				-1	},
-	{ "Zathura",  				NULL,       	NULL,       0,       			1,      		 	0, 						0,				-1	},
-	{ "Iwgtk",  					NULL,       	NULL,       0,       			1,      		 	0, 						0,				-1	},
-	{ "Galculator",  			NULL,       	NULL,       0,       			1,      		 	0, 						0,				-1	},
-	{ NULL, 							NULL, 				"hidden", 	SP_MASK, 			1, 						0,						0,				-1  },
-	{ NULL, 							NULL, 				"flterm", 	0, 						1, 						1,						0,				-1  },
+	{ NULL,  							"Navigator",	NULL,      			1 << 4,       0,           	0, 						1,				-1	},
+	{ NULL,  							"Toolkit", 		NULL,      			0,       			1,           	0, 						1,				-1	},
+	/* xev */
+	{ NULL,  							NULL, 				"Event Tester", 0,       			0,           	0, 						0,				-1	},
+	{ "TelegramDesktop",  NULL,       	NULL,       		1 << 3,       1,           	0, 						0,				-1	},
+	{ "lightcord",  			NULL,       	NULL,       		1 << 3,       0,      		 	0, 						0,				-1	},
+	{ "Steam",  					NULL,       	NULL,       		1 << 2,       1,      		 	0, 						0,				-1	},
+	{ "obs",  						NULL,       	NULL,       		1 << 2,       1,      		 	0, 						1,				-1	},
+	{ "Sxiv",  						NULL,       	NULL,       		0,       			1,      		 	0, 						0,				-1	},
+	{ "mpv",  						NULL,       	NULL,       		0,       			1,      		 	0, 						0,				-1	},
+	{ "Iwgtk",  					NULL,       	NULL,       		0,       			1,      		 	0, 						0,				-1	},
+	{ "Galculator",  			NULL,       	NULL,       		0,       			1,      		 	0, 						0,				-1	},
+	{ NULL, 							NULL, 				"hidden", 			SP_MASK, 			1, 						0,						0,				-1  },
+	{ NULL, 							NULL, 				"flterm", 			0, 						1, 						1,						0,				-1  },
+	{ "tabbed", 					NULL, 				NULL, 					0, 						0, 						0,						0,				-1  },
 };
 
 /* layout(s) */
@@ -101,7 +101,7 @@ static const char *psmenucmd[] = { "passmenu2", NULL };
 
 static const char *termcmd[]  = { TERM, NULL };
 static const char *fltermcmd[]  = { TERM, "-t", "flterm", "-g", "60x20", NULL };
-static const char *tbtermcmd[]  = { "tabbed", "-r", "2", TERM, "-w", "\'\'", NULL };
+static const char *tbtermcmd[]  = { "tabbed", "-c", "-r", "2", TERM, "-w", "\'\'", NULL };
 
 #include "movestack.c"
 static Key keys[] = {
@@ -198,6 +198,7 @@ static Key keys[] = {
 	/* Graphical Applications */
 	{ ALTKEY,             		XK_g,       XK_1, 		 spawn,          SHCMD("firefox-developer-edition") },
 	{ ALTKEY,             		XK_g,       XK_2, 		 spawn,          SHCMD("librewolf") },
+	{ ALTKEY,             		XK_g,       XK_3, 		 spawn,          SHCMD("surf-open.sh") },
 
 	/* Screenshots with scrot */
 	{ 0,             					-1,       	XK_Print,  spawn,          SHCMD("sleep 0.2; scrot -s -f '%Y-%m-%d_$wx$h.png' -e 'mv $f /home/math/Imagens/Prints'") },
