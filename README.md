@@ -1,7 +1,5 @@
 # dwm - dynamic window manager
 
----
-
 This is my dwm build, with several patches I've applied for improving my workflow.   
 
 # Patches  
