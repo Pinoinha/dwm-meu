@@ -38,7 +38,7 @@ sudo make install
 # Tips
 
 * Learn some C, it will make wonders for your coding skills
-* When applying patches, use `patch -p1 < patch-name`: this will generate `.rej` files for you to analyze and make your life easier
+* When applying patches, use `patch -p1 < patch-name.diff`: this will generate `.rej` files for you to analyze and make your life easier
 * Never forget to add and commit your changes (push if possible) before applying any patches
 * Read the documentation at `man dwm` and [Suckless' website](https://suckless.org/); also, the code on its own is also pretty good documentation if you know what's going on
 * Have fun :)
