@@ -1,4 +1,4 @@
-#dwm - dynamic window manager
+# dwm - dynamic window manager
 
 ---
 
