@@ -166,6 +166,9 @@ static Key keys[] = {
 	{ MODKEY,             		-1,					XK_backslash,	 scratchpad_hide, 			 {0} },
 	{ MODKEY|ShiftMask,       -1,					XK_backslash,	 scratchpad_show, 			 {0} },
 	{ MODKEY|ControlMask,     -1,					XK_backslash,  scratchpad_remove,			 {0} },
+	{ ALTKEY,             		-1,					XK_backslash,	 scratchpad_hide, 			 {0} },
+	{ ALTKEY|ShiftMask,       -1,					XK_backslash,	 scratchpad_show, 			 {0} },
+	{ ALTKEY|ControlMask,     -1,					XK_backslash,  scratchpad_remove,			 {0} },
 
 	/* Audio control */
 	{ ShiftMask,       				-1,         XK_F1,     spawn,          SHCMD("pulsemixer --toggle-mute; pkill -RTMIN+10 dwmblocks")},
