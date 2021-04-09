@@ -41,7 +41,7 @@ static const char *downvol[] = { "/usr/bin/pamixer", "--sink", "0", "-d", "5",  
 static const char *mutevol[] = { "/usr/bin/pamixer", "--sink",   "0", "-t",  NULL };
 
 /* tagging */
-static const char *tags[] = { "", "", "", "切", "" };
+static const char *tags[] = { "", "", "", "切", "" };
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -53,6 +53,7 @@ static const Rule rules[] = {
 	{ "Alacritty",    		NULL,     		NULL,       		0,         		0,          	1,						0,        -1	},
 	/* Web browsers are opened at tag	5 */
 	{ NULL,  							"Navigator",	NULL,      			1 << 4,       0,           	0, 						1,				-1	},
+	{ "Luakit",  					NULL,					NULL,      			1 << 4,       0,           	0, 						1,				-1	},
 	{ NULL,  							"Toolkit", 		NULL,      			0,       			1,           	0, 						1,				-1	},
 	/* xev */
 	{ NULL,  							NULL, 				"Event Tester", 0,       			0,           	0, 						0,				-1	},
@@ -62,10 +63,9 @@ static const Rule rules[] = {
 	{ "obs",  						NULL,       	NULL,       		1 << 2,       1,      		 	0, 						1,				-1	},
 	{ "Sxiv",  						NULL,       	NULL,       		0,       			1,      		 	0, 						0,				-1	},
 	{ "mpv",  						NULL,       	NULL,       		0,       			1,      		 	0, 						0,				-1	},
-	{ "Iwgtk",  					NULL,       	NULL,       		0,       			1,      		 	0, 						0,				-1	},
 	{ "Galculator",  			NULL,       	NULL,       		0,       			1,      		 	0, 						0,				-1	},
 	{ NULL, 							NULL, 				"hidden", 			SP_MASK, 			1, 						0,						0,				-1  },
-	{ NULL, 							NULL, 				"flterm", 			0, 						1, 						1,						0,				-1  },
+	{ "flterm", 					NULL, 				NULL, 					0, 						1, 						1,						0,				-1  },
 	{ "tabbed", 					NULL, 				NULL, 					0, 						0, 						0,						0,				-1  },
 };
 
@@ -97,17 +97,20 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, "-l", "6", NULL };
-static const char *psmenucmd[] = { "passmenu2", NULL };
 
 static const char *termcmd[]  = { TERM, NULL };
-static const char *fltermcmd[]  = { TERM, "-t", "flterm", "-g", "60x20", NULL };
+static const char *fltermcmd[]  = { TERM, "-c", "flterm", "-g", "60x20", NULL };
 static const char *tbtermcmd[]  = { "tabbed", "-c", "-r", "2", TERM, "-w", "\'\'", NULL };
 
 #include "movestack.c"
 static Key keys[] = {
 	/* modifier               chain key   key        function        argument */
-	{ ALTKEY,                 XK_d,       XK_1,      spawn,          {.v = dmenucmd } },
-	{ ALTKEY,                 XK_d,       XK_2,      spawn,          {.v = psmenucmd } },
+
+	/* Dmenu-based applications */
+	{ MODKEY,                 XK_d,       XK_1,      spawn,          {.v = dmenucmd } },
+	{ MODKEY,                 XK_d,       XK_2,      spawn,          SHCMD("passmenu2") },
+	{ MODKEY,                 XK_d,       XK_3,      spawn,          SHCMD("connect_wlan") },
+	{ MODKEY,                 XK_d,       XK_4,      spawn,          SHCMD("ytfzf -D") },
 
 	{ MODKEY,             		-1,         XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY|ShiftMask,	      -1, 				XK_Return, spawn,          {.v = fltermcmd } }, 
@@ -125,17 +128,12 @@ static Key keys[] = {
 	{ MODKEY|ControlMask,     -1,         XK_equal,  zoom,           {0} },
 	{ MODKEY,                 -1,         XK_Tab,    view,           {0} },
 	{ MODKEY|ShiftMask,       -1,         XK_w,      killclient,     {0} },
-	{ ALTKEY|ShiftMask,       -1,         XK_w,      killclient,     {0} },
 	{ MODKEY,                 -1,         XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ ALTKEY,                 -1,         XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                 -1,         XK_m,      setlayout,      {.v = &layouts[2]} },
-	{ ALTKEY,                 -1,         XK_m,      setlayout,      {.v = &layouts[2]} },
 	{ MODKEY|ShiftMask,       -1,         XK_space,  setlayout,      {0} },
 	{ MODKEY,             		-1,         XK_space,  togglefloating, {0} },
 	{ MODKEY,             		-1,					XK_f,      togglefullscr,  {0} },
-	{ ALTKEY,             		-1,					XK_f,      togglefullscr,  {0} },
 	{ MODKEY,                 -1,					XK_s,      togglesticky,   {0} },
-	{ ALTKEY,                 -1,					XK_s,      togglesticky,   {0} },
 	{ MODKEY,                 -1,         XK_comma,  focusmon,       {.i = -1 } },
 	{ MODKEY,                 -1,         XK_period, focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,       -1,         XK_comma,  tagmon,         {.i = -1 } },
@@ -160,15 +158,11 @@ static Key keys[] = {
 
 	/* Center a floating window using custom wmMove command */
 	{ MODKEY,       					-1,       	XK_c, 		 spawn,          SHCMD("wmMove center") },
-	{ ALTKEY,       					-1,       	XK_c, 		 spawn,          SHCMD("wmMove center") },
 
 	/* Scratchpad control */
 	{ MODKEY,             		-1,					XK_backslash,	 scratchpad_hide, 			 {0} },
 	{ MODKEY|ShiftMask,       -1,					XK_backslash,	 scratchpad_show, 			 {0} },
 	{ MODKEY|ControlMask,     -1,					XK_backslash,  scratchpad_remove,			 {0} },
-	{ ALTKEY,             		-1,					XK_backslash,	 scratchpad_hide, 			 {0} },
-	{ ALTKEY|ShiftMask,       -1,					XK_backslash,	 scratchpad_show, 			 {0} },
-	{ ALTKEY|ControlMask,     -1,					XK_backslash,  scratchpad_remove,			 {0} },
 
 	/* Audio control */
 	{ ShiftMask,       				-1,         XK_F1,     spawn,          SHCMD("pulsemixer --toggle-mute; pkill -RTMIN+10 dwmblocks")},
@@ -187,22 +181,23 @@ static Key keys[] = {
 	{ ShiftMask,       				-1,         XK_F12,    spawn,          SHCMD("xbacklight -inc 10") },
 
 	/* Terminal Applications */
-	{ ALTKEY,             		-1,         XK_v, 		 spawn,          SHCMD(TERM " -e nvim") },
-	{ ALTKEY,             		XK_e,       XK_1, 		 spawn,          SHCMD(TERM " -e lf") },
-	{ ALTKEY,             		XK_e,       XK_2, 		 spawn,          SHCMD(TERM " -e ncmpcpp") },
-	{ ALTKEY,             		XK_e,       XK_3, 		 spawn,          SHCMD(TERM " -e ncspot") },
-	{ ALTKEY,             		XK_e,       XK_4, 		 spawn,          SHCMD(TERM " -e newsboat") },
-	{ ALTKEY,             		XK_e,       XK_5, 		 spawn,          SHCMD(TERM " -e htop") },
-	{ ALTKEY,             		XK_e,       XK_6, 		 spawn,          SHCMD(TERM " -e pulsemixer") },
+	{ MODKEY,             		-1,         XK_v, 		 spawn,          SHCMD(TERM " -e nvim") },
+	{ MODKEY,             		XK_e,       XK_1, 		 spawn,          SHCMD(TERM " -e lf") },
+	{ MODKEY,             		XK_e,       XK_2, 		 spawn,          SHCMD(TERM " -e ncmpcpp") },
+	{ MODKEY,             		XK_e,       XK_3, 		 spawn,          SHCMD(TERM " -e ncspot") },
+	{ MODKEY,             		XK_e,       XK_4, 		 spawn,          SHCMD(TERM " -e aerc") },
+	{ MODKEY,             		XK_e,       XK_5, 		 spawn,          SHCMD(TERM " -e newsboat") },
+	{ MODKEY,             		XK_e,       XK_6, 		 spawn,          SHCMD(TERM " -e pulsemixer") },
+	{ MODKEY,             		XK_e,       XK_7, 		 spawn,          SHCMD(TERM " -e htop") },
 
 	/* Graphical Applications */
-	{ ALTKEY,             		XK_g,       XK_1, 		 spawn,          SHCMD("firefox-developer-edition") },
-	{ ALTKEY,             		XK_g,       XK_2, 		 spawn,          SHCMD("librewolf") },
-	{ ALTKEY,             		XK_g,       XK_3, 		 spawn,          SHCMD("surf-open.sh") },
+	{ MODKEY,             		XK_g,       XK_1, 		 spawn,          SHCMD("firefox-developer-edition") },
+	{ MODKEY,             		XK_g,       XK_2, 		 spawn,          SHCMD("librewolf") },
+	{ MODKEY,             		XK_g,       XK_3, 		 spawn,          SHCMD("luakit") },
 
 	/* Screenshots with scrot */
 	{ 0,             					-1,       	XK_Print,  spawn,          SHCMD("sleep 0.2; scrot -s -f '%Y-%m-%d_$wx$h.png' -e 'mv $f /home/math/Imagens/Prints'") },
-	{ ShiftMask,        			-1,       	XK_Print,  spawn,          SHCMD("sleep 0.2; scrot -u '%Y-%m-%d_$wx$h.png'-e 'mv $f /home/math/Imagens/Prints'") },
+	{ ShiftMask,        			-1,       	XK_Print,  spawn,          SHCMD("sleep 0.2; scrot -u '%Y-%m-%d_$wx$h.png' -e 'mv $f /home/math/Imagens/Prints'") },
 	{ ALTKEY,        					-1,       	XK_Print,  spawn,          SHCMD("sleep 0.2; \"%Y-%m-%d_$wx$h.png\" -e 'mv $f /home/math/Imagens/Prints'") },
 };
 
