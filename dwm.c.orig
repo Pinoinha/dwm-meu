@@ -127,6 +127,7 @@ struct Client {
 
 typedef struct {
 	unsigned int mod;
+    KeySym chain;
 	KeySym keysym;
 	void (*func)(const Arg *);
 	const Arg arg;
@@ -181,8 +182,7 @@ struct Systray {
 	Client *icons;
 };
 
-// Shiftview function declaration
-
+/* Shiftview function declaration */
 void shiftview(const Arg *arg);
 
 /* function declarations */
@@ -348,6 +348,7 @@ static Display *dpy;
 static Drw *drw;
 static Monitor *mons, *selmon;
 static Window root, wmcheckwin;
+static KeySym keychain = -1;
 
 /* scratchpad */
 # define SP_MASK (1u << sizeof tags / sizeof * tags)
@@ -963,8 +964,11 @@ drawbar(Monitor *m)
 		if (m->sel) {
 			drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
 			drw_text(drw, x, 0, w, bh, lrpad / 2, m->sel->name, 0);
-			if (m->sel->isfloating)
+			if (m->sel->isfloating) {
 				drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
+				if (m->sel->isalwaysontop)
+					drw_rect(drw, x + boxs, bh - boxw, boxw, boxw, 0, 0);
+			}
 		} else {
 			drw_setscheme(drw, scheme[SchemeNorm]);
 			drw_rect(drw, x, 0, w, bh, 1, 1);
@@ -1204,13 +1208,18 @@ grabkeys(void)
 		unsigned int i, j;
 		unsigned int modifiers[] = { 0, LockMask, numlockmask, numlockmask|LockMask };
 		KeyCode code;
+		KeyCode chain;
 
 		XUngrabKey(dpy, AnyKey, AnyModifier, root);
 		for (i = 0; i < LENGTH(keys); i++)
-			if ((code = XKeysymToKeycode(dpy, keys[i].keysym)))
+			if ((code = XKeysymToKeycode(dpy, keys[i].keysym))) {
+				if (keys[i].chain != -1 &&
+					((chain = XKeysymToKeycode(dpy, keys[i].chain))))
+						code = chain;
 				for (j = 0; j < LENGTH(modifiers); j++)
 					XGrabKey(dpy, code, keys[i].mod | modifiers[j], root,
 						True, GrabModeAsync, GrabModeAsync);
+			}
 	}
 }
 
@@ -1236,17 +1245,37 @@ isuniquegeom(XineramaScreenInfo *unique, size_t n, XineramaScreenInfo *info)
 void
 keypress(XEvent *e)
 {
-	unsigned int i;
+	unsigned int i, j;
 	KeySym keysym;
 	XKeyEvent *ev;
+	int current = 0;
+	unsigned int modifiers[] = { 0, LockMask, numlockmask, numlockmask|LockMask };
 
 	ev = &e->xkey;
 	keysym = XKeycodeToKeysym(dpy, (KeyCode)ev->keycode, 0);
-	for (i = 0; i < LENGTH(keys); i++)
-		if (keysym == keys[i].keysym
-		&& CLEANMASK(keys[i].mod) == CLEANMASK(ev->state)
-		&& keys[i].func)
+	for (i = 0; i < LENGTH(keys); i++) {
+		if (keysym == keys[i].keysym && keys[i].chain == -1
+				&& CLEANMASK(keys[i].mod) == CLEANMASK(ev->state)
+				&& keys[i].func)
 			keys[i].func(&(keys[i].arg));
+		else if (keysym == keys[i].chain && keychain == -1
+				&& CLEANMASK(keys[i].mod) == CLEANMASK(ev->state)
+				&& keys[i].func) {
+			current = 1;
+			keychain = keysym;
+			for (j = 0; j < LENGTH(modifiers); j++)
+				XGrabKey(dpy, AnyKey, 0 | modifiers[j], root,
+						True, GrabModeAsync, GrabModeAsync);
+		} else if (!current && keysym == keys[i].keysym
+				&& keychain != -1
+				&& keys[i].chain == keychain
+				&& keys[i].func)
+			keys[i].func(&(keys[i].arg));
+	}
+	if (!current) {
+		keychain = -1;
+		grabkeys();
+	}
 }
 
 void
@@ -1662,6 +1691,17 @@ restack(Monitor *m)
 		return;
 	if (m->sel->isfloating || !m->lt[m->sellt]->arrange)
 		XRaiseWindow(dpy, m->sel->win);
+
+	/* raise the aot window */
+	for(Monitor *m_search = mons; m_search; m_search = m_search->next){
+		for(c = m_search->clients; c; c = c->next){
+			if(c->isalwaysontop){
+				XRaiseWindow(dpy, c->win);
+				break;
+			}
+		}
+	}
+
 	if (m->lt[m->sellt]->arrange) {
 		wc.stack_mode = Below;
 		wc.sibling = m->barwin;
@@ -2257,6 +2297,32 @@ togglefloating(const Arg *arg)
 	if (selmon->sel->isfloating)
 		resize(selmon->sel, selmon->sel->x, selmon->sel->y,
 			selmon->sel->w, selmon->sel->h, 0);
+	else
+		selmon->sel->isalwaysontop = 0; /* disabled, turn this off too */
+	arrange(selmon);
+}
+
+void
+togglealwaysontop(const Arg *arg)
+{
+	if (!selmon->sel)
+		return;
+	if (selmon->sel->isfullscreen)
+		return;
+
+	if(selmon->sel->isalwaysontop){
+		selmon->sel->isalwaysontop = 0;
+	}else{
+		/* disable others */
+		for(Monitor *m = mons; m; m = m->next)
+			for(Client *c = m->clients; c; c = c->next)
+				c->isalwaysontop = 0;
+
+		/* turn on, make it float too */
+		selmon->sel->isfloating = 1;
+		selmon->sel->isalwaysontop = 1;
+	}
+
 	arrange(selmon);
 }
 
@@ -3065,7 +3131,8 @@ main(int argc, char *argv[])
  *    *          or left (negative value)
  *     */
 void
-shiftview(const Arg *arg) {
+shiftview(const Arg *arg) 
+{
 		Arg shifted;
 
 			if(arg->i > 0) // left circular shift

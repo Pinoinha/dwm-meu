@@ -222,12 +222,7 @@ static Key keys[] = {
 	{ MODKEY,             		XK_e,       XK_3, 		 									 spawn,          SHCMD(TERM " -e newsboat") },
 	{ MODKEY,             		XK_e,       XK_4, 		 									 spawn,          SHCMD(TERM " -e pulsemixer") },
 	{ MODKEY,             		XK_e,       XK_5, 		 									 spawn,          SHCMD(TERM " -e htop") },
-	#ifdef __ALACRITTY__
-	{ MODKEY,             		XK_e,       XK_6, 		 									 spawn,          SHCMD(TERM " --class flterm,flterm -e calc") },
-	#endif
-	#ifdef __ST__
 	{ MODKEY,             		XK_e,       XK_6, 		 									 spawn,          SHCMD(TERM " -c flterm -e calc") },
-	#endif
 
 	/* Web browsers */
 	{ MODKEY,             		XK_b,       XK_1, 		 									 spawn,          SHCMD("notify-send 'Navegador inicializado' 'Firefox'; firefox") },

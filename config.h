@@ -1,7 +1,17 @@
 /* See LICENSE file for copyright and license details. */
 
-/* Define the terminal of your choice here */
+/* Choose the terminal of your choice and comment the other ones out*/
+
+/*#define __ST__*/
+#define __ALACRITTY__
+
+#ifdef __ALACRITTY__
+#define TERM "alacritty"
+#endif
+
+#ifdef __ST__
 #define TERM "st"
+#endif
 
 /* appearance */
 static const unsigned int borderpx  = 0;        /* border pixel of windows */
@@ -19,7 +29,7 @@ static const int showsystray        = 0;     /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const int user_bh            = 32;        /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
-static const char *fonts[]          = { "Adobe Courier Regular:size=14", "Symbols Nerd Font:size=12" };
+static const char *fonts[]          = { "Adobe Courier Regular:size=14", "Symbols Nerd Font:style=1000-em:size=12" };
 static const char dmenufont[]       = "Adobe Courier Regular:size=14";
 static const char col_gray1[]       = "#121212";
 static const char col_gray2[]       = "#444444";
@@ -38,7 +48,7 @@ static const char *downvol[] = { "/usr/bin/pamixer", "--sink", "0", "-d", "5",  
 static const char *mutevol[] = { "/usr/bin/pamixer", "--sink",   "0", "-t",  NULL };
 
 /* tagging */
-static const char *tags[] = { "", "", "", "切", "" };
+static const char *tags[] = { "", "", "", "", "" };
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -51,19 +61,19 @@ static const Rule rules[] = {
 	/* Web browsers are opened at tag	5 */
 	{ NULL,  							"Navigator",	NULL,      			1 << 4,       0,           	0, 						1,				-1	},
 	{ NULL,  							"Toolkit", 		NULL,      			0,       			1,           	0, 						1,				-1	},
+	{ NULL,  							"Chromium-browser",	NULL,    	1 << 4,       0,           	0, 						1,				-1	},
 	/* xev */
-	{ NULL,  							NULL, 				NULL, 					0,       			0,           	0, 						1,				-1	},
+	{ NULL,  							NULL, 				"Event Tester", 0,       			0,           	0, 						1,				-1	},
 	{ "TelegramDesktop",  NULL,       	NULL,       		1 << 3,       1,           	0, 						0,				-1	},
 	{ "lightcord",  			NULL,       	NULL,       		1 << 3,       0,      		 	0, 						0,				-1	},
 	{ "Steam",  					NULL,       	NULL,       		1 << 2,       1,      		 	0, 						0,				-1	},
 	{ "obs",  						NULL,       	NULL,       		1 << 2,       1,      		 	0, 						1,				-1	},
+	{ "Virt-manager",  		NULL,       	NULL,       		1 << 2,       0,      		 	0, 						1,				-1	}, 
 	{ "Sxiv",  						NULL,       	NULL,       		0,       			1,      		 	0, 						0,				-1	},
-	{ "mpv",  						NULL,       	NULL,       		0,       			1,      		 	0, 						0,				-1	},
-	{ "Galculator",  			NULL,       	NULL,       		0,       			1,      		 	0, 						0,				-1	},
+	{ "mpv",  						NULL,       	NULL,       		1 << 1,      	1,      		 	0, 						0,				-1	},
 	{ "zoom",  						NULL,       	NULL,       		1 << 3,      	1,      		 	0, 						0,				-1	},
 	{ NULL, 							NULL, 				"hidden", 			SP_MASK, 			1, 						0,						0,				-1  },
-	{ "flterm", 					NULL, 				NULL, 					0, 						1, 						1,						0,				-1  },
-	{ "tabbed", 					NULL, 				NULL, 					0, 						0, 						0,						0,				-1  },
+	{ "flterm", 					NULL, 				NULL, 					0, 						1, 						0,						0,				-1  },
 };
 
 /* layout(s) */
@@ -95,9 +105,19 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, "-l", "6", NULL };
 
+/* general terminal command */
 static const char *termcmd[]  = { TERM, NULL };
-static const char *fltermcmd[]  = { TERM, "-c", "flterm", "-g", "60x20", NULL };
+
+/* commands that rely on specific options */
+#ifdef __ST__
+static const char *fltermcmd[]  = { TERM, "-c", "flterm", NULL };
 static const char *tmtermcmd[]  = { TERM, "-c", "tmux", "-e", "tmux", "a", NULL };
+#endif
+
+#ifdef __ALACRITTY__
+static const char *fltermcmd[]  = { TERM, "--class=flterm,flterm", NULL };
+static const char *tmtermcmd[]  = { TERM, "--class=tmux,tmux", "-e", "tmux", "a", NULL };
+#endif
 
 /* XF86 keys */
 #include <X11/XF86keysym.h>
@@ -110,11 +130,11 @@ static Key keys[] = {
 	{ MODKEY,                 XK_d,       XK_1,      				 spawn,          {.v = dmenucmd } },
 	{ MODKEY,                 XK_d,       XK_2,      				 spawn,          SHCMD("passmenu2") },
 	{ MODKEY,                 XK_d,       XK_3,      				 spawn,          SHCMD("connect_wlan") },
-	{ MODKEY,                 XK_d,       XK_4,      				 spawn,          SHCMD("ytfzf -D") },
+	{ MODKEY,                 XK_d,       XK_4,      				 spawn,          SHCMD("ytfzf -Ds") },
 
-	{ MODKEY,             		-1,         XK_Return, 				 spawn,          {.v = termcmd } },
+	{ MODKEY,             		-1,         XK_Return, 				 spawn,          {.v = tmtermcmd } },
 	{ MODKEY|ShiftMask,	      -1, 				XK_Return, 				 spawn,          {.v = fltermcmd } }, 
-	{ MODKEY|ControlMask,	    -1, 				XK_Return, 				 spawn,          {.v = tmtermcmd } }, 
+	{ MODKEY|ControlMask,	    -1, 				XK_Return, 				 spawn,          {.v = termcmd } }, 
 
 	{ MODKEY|ShiftMask,       -1,					XK_b,      				 togglebar,      {0} },
 	{ MODKEY,                 -1,         XK_j,      				 focusstack,     {.i = +1 } },
@@ -130,15 +150,17 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,       -1,         XK_w,      				 killclient,     {0} },
 	{ MODKEY,                 -1,         XK_t,      				 setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                 -1,         XK_m,      				 setlayout,      {.v = &layouts[2]} },
-	{ MODKEY|ShiftMask,       -1,         XK_space,  				 setlayout,      {0} },
-	{ MODKEY,             		-1,         XK_space,  				 togglefloating, {0} },
-	{ MODKEY,             		-1,					XK_f,      				 togglefullscr,  {0} },
-	{ MODKEY,                 -1,					XK_s,      				 togglesticky,   {0} },
-	{ MODKEY,                 -1,         XK_comma,  				 focusmon,       {.i = -1 } },
-	{ MODKEY,                 -1,         XK_period, 				 focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,       -1,         XK_comma,  				 tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,       -1,         XK_period, 				 tagmon,         {.i = +1 } },
-	{ MODKEY|ShiftMask,       -1,					XK_BackSpace,      quit,   				 {0} },
+	{ MODKEY|ShiftMask,       -1,         XK_space,  				 setlayout,      		{0} },
+	{ MODKEY,             		-1,         XK_space,  				 togglefloating, 		{0} },
+	{ MODKEY,             		-1,					XK_f,      				 togglefullscr,  		{0} },
+	{ MODKEY,                 -1,					XK_s,      				 togglesticky,   		{0} },
+	{ MODKEY,									-1,					XK_y,							 togglealwaysontop, {0} },
+	{ MODKEY,                 -1,         XK_comma,  				 focusmon,       		{.i = -1 } },
+	{ MODKEY,                 -1,         XK_period, 				 focusmon,       		{.i = +1 } },
+	{ MODKEY|ShiftMask,       -1,         XK_comma,  				 tagmon,         		{.i = -1 } },
+	{ MODKEY|ShiftMask,       -1,         XK_period, 				 tagmon,         		{.i = +1 } },
+	{ MODKEY|ShiftMask,       -1,					XK_BackSpace,      quit,   				 		{0} },
+
 	{ ALTKEY|ShiftMask,       -1,       	XK_l, 		 				 spawn,          SHCMD("slock") },
 
 	/* Tag control */
@@ -200,20 +222,26 @@ static Key keys[] = {
 	{ MODKEY,             		XK_e,       XK_3, 		 									 spawn,          SHCMD(TERM " -e newsboat") },
 	{ MODKEY,             		XK_e,       XK_4, 		 									 spawn,          SHCMD(TERM " -e pulsemixer") },
 	{ MODKEY,             		XK_e,       XK_5, 		 									 spawn,          SHCMD(TERM " -e htop") },
-	{ MODKEY,             		XK_e,       XK_6, 		 									 spawn,          SHCMD(TERM " -c flterm -g 60x20 -e calc") },
+	#ifdef __ALACRITTY__
+	{ MODKEY,             		XK_e,       XK_6, 		 									 spawn,          SHCMD(TERM " --class flterm,flterm -e calc") },
+	#endif
+	#ifdef __ST__
+	{ MODKEY,             		XK_e,       XK_6, 		 									 spawn,          SHCMD(TERM " -c flterm -e calc") },
+	#endif
 
 	/* Web browsers */
-	{ MODKEY,             		XK_b,       XK_1, 		 									 spawn,          SHCMD("firefox-developer-edition") },
-	{ MODKEY,             		XK_b,       XK_2, 		 									 spawn,          SHCMD("librewolf") },
+	{ MODKEY,             		XK_b,       XK_1, 		 									 spawn,          SHCMD("notify-send 'Navegador inicializado' 'Firefox'; firefox") },
+	{ MODKEY,             		XK_b,       XK_2, 		 									 spawn,          SHCMD("notify-send 'Navegador inicializado' 'Ungoogled-Chromium'; chromium") },
 
 	/* Graphical applications */
-	{ MODKEY,             		XK_g,       XK_t, 		 									 spawn,          SHCMD("telegram-desktop") },
-	{ MODKEY,             		XK_g,       XK_d, 		 									 spawn,          SHCMD("lightcord") },
+	{ MODKEY,             		XK_g,       XK_t, 		 									 spawn,          SHCMD("notify-send 'Inicializando' 'Telegram Desktop'; telegram-desktop") },
+	{ MODKEY,             		XK_g,       XK_s, 		 									 spawn,          SHCMD("notify-send 'Inicializando' 'Steam'; steam") },
+	{ MODKEY,             		XK_g,       XK_p, 		 									 spawn,          SHCMD("notify-send 'Inicializando' 'pcmanfm'; pcmanfm") },
 
 	/* Screenshots with scrot */
 	{ 0,             					-1,       	XK_Print,  									 spawn,          SHCMD("sleep 0.2; scrot -s -f '%Y-%m-%d_$wx$h.png' -e 'mv $f /home/math/Imagens/Prints'") },
 	{ ShiftMask,        			-1,       	XK_Print,  									 spawn,          SHCMD("sleep 0.2; scrot -u '%Y-%m-%d_$wx$h.png' -e 'mv $f /home/math/Imagens/Prints'") },
-	{ ALTKEY,        					-1,       	XK_Print,  									 spawn,          SHCMD("sleep 0.2; \"%Y-%m-%d_$wx$h.png\" -e 'mv $f /home/math/Imagens/Prints'") },
+	{ ALTKEY,        					-1,       	XK_Print,  									 spawn,          SHCMD("sleep 0.2; '%Y-%m-%d_$wx$h.png' -e 'mv $f /home/math/Imagens/Prints'") },
 };
 
 /* button definitions */
