@@ -17,9 +17,9 @@
 static const unsigned int borderpx  = 0;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const unsigned int gappih    = 10;       /* horiz inner gap between windows */
-static const unsigned int gappiv    = 6;       /* vert inner gap between windows */
-static const unsigned int gappoh    = 10;       /* horiz outer gap between windows and screen edge */
-static const unsigned int gappov    = 10;       /* vert outer gap between windows and screen edge */
+static const unsigned int gappiv    = 6;       	/* vert inner gap between windows */
+static const unsigned int gappoh    = 20;       /* horiz outer gap between windows and screen edge */
+static const unsigned int gappov    = 30;       /* vert outer gap between windows and screen edge */
 static const int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
 static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
 static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
@@ -74,6 +74,8 @@ static const Rule rules[] = {
 	{ "zoom",  						NULL,       	NULL,       		1 << 3,      	1,      		 	0, 						0,				-1	},
 	{ NULL, 							NULL, 				"hidden", 			SP_MASK, 			1, 						0,						0,				-1  },
 	{ "flterm", 					NULL, 				NULL, 					0, 						1, 						0,						0,				-1  },
+	{ "Com.github.xournalpp.xournalpp", 					NULL, 				NULL, 					1 << 2, 						1, 						0,						0,				-1  },
+
 };
 
 /* layout(s) */
@@ -83,7 +85,7 @@ static const int resizehints = 0;    /* 1 means respect size hints in tiled resi
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "[]=",      tile },    /* first entry is default */
+	{ "[ ]",      	tile },    /* first entry is default */
 	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
 };
@@ -149,8 +151,8 @@ static Key keys[] = {
 	{ MODKEY,                 -1,         XK_Tab,    				 view,           {0} },
 	{ MODKEY|ShiftMask,       -1,         XK_w,      				 killclient,     {0} },
 	{ MODKEY,                 -1,         XK_t,      				 setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                 -1,         XK_m,      				 setlayout,      {.v = &layouts[2]} },
-	{ MODKEY|ShiftMask,       -1,         XK_space,  				 setlayout,      		{0} },
+	{ MODKEY|ShiftMask,       -1,         XK_space,  				 setlayout,      {.v = &layouts[1]} },
+	{ MODKEY|ShiftMask,       -1,         XK_m,      				 setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,             		-1,         XK_space,  				 togglefloating, 		{0} },
 	{ MODKEY,             		-1,					XK_f,      				 togglefullscr,  		{0} },
 	{ MODKEY,                 -1,					XK_s,      				 togglesticky,   		{0} },
@@ -218,20 +220,21 @@ static Key keys[] = {
 	/* Terminal Applications */
 	{ MODKEY,             		-1,         XK_v, 		 									 spawn,          SHCMD(TERM " -e nvim") },
 	{ MODKEY,             		XK_e,       XK_1, 		 									 spawn,          SHCMD(TERM " -e lf") },
-	{ MODKEY,             		XK_e,       XK_2, 		 									 spawn,          SHCMD(TERM " -e ncspot") },
-	{ MODKEY,             		XK_e,       XK_3, 		 									 spawn,          SHCMD(TERM " -e newsboat") },
-	{ MODKEY,             		XK_e,       XK_4, 		 									 spawn,          SHCMD(TERM " -e pulsemixer") },
-	{ MODKEY,             		XK_e,       XK_5, 		 									 spawn,          SHCMD(TERM " -e htop") },
+	{ MODKEY,             		XK_e,       XK_2, 		 									 spawn,          SHCMD(TERM " -e newsboat") },
+	{ MODKEY,             		XK_e,       XK_3, 		 									 spawn,          SHCMD(TERM " -e pulsemixer") },
+	{ MODKEY,             		XK_e,       XK_4, 		 									 spawn,          SHCMD(TERM " -e htop") },
 	#ifdef __ALACRITTY__
-	{ MODKEY,             		XK_e,       XK_6, 		 									 spawn,          SHCMD(TERM " --class flterm,flterm -e calc") },
+	{ MODKEY,             		XK_e,       XK_5, 		 									 spawn,          SHCMD(TERM " --class flterm,flterm -e calc") },
 	#endif
+
 	#ifdef __ST__
-	{ MODKEY,             		XK_e,       XK_6, 		 									 spawn,          SHCMD(TERM " -c flterm -e calc") },
+	{ MODKEY,             		XK_e,       XK_5, 		 									 spawn,          SHCMD(TERM " -c flterm -e calc") },
 	#endif
 
 	/* Web browsers */
 	{ MODKEY,             		XK_b,       XK_1, 		 									 spawn,          SHCMD("notify-send 'Navegador inicializado' 'Firefox'; firefox") },
 	{ MODKEY,             		XK_b,       XK_2, 		 									 spawn,          SHCMD("notify-send 'Navegador inicializado' 'Ungoogled-Chromium'; chromium") },
+	{ MODKEY,             		XK_b,       XK_3, 		 									 spawn,          SHCMD("notify-send 'Navegador inicializado' 'Tor'; torbrowser-launcher") },
 
 	/* Graphical applications */
 	{ MODKEY,             		XK_g,       XK_t, 		 									 spawn,          SHCMD("notify-send 'Inicializando' 'Telegram Desktop'; telegram-desktop") },
